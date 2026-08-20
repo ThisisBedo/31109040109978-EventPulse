@@ -2,6 +2,7 @@ require("dotenv").config();
 const path = require("path");
 const http = require("http");
 const express = require("express");
+const cors = require("cors");
 const { Server } = require("socket.io");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
@@ -28,6 +29,7 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 // Middleware
+app.use(cors({ origin: "*" })); // Fixes CORS "Failed to fetch" in Swagger
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 app.use(express.json());
 
@@ -40,7 +42,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// Swagger JSDoc Options Configuration
+// Swagger Options Configuration
 const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
@@ -59,8 +61,16 @@ const swaggerOptions = {
         description: "Development Server",
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
   },
-  // Use path.join to create absolute paths for Vercel serverless execution
   apis: [
     path.join(__dirname, "./routes/*.js"),
     path.join(__dirname, "./controllers/*.js"),
@@ -69,7 +79,7 @@ const swaggerOptions = {
   ],
 };
 
-// Generate Swagger Spec and Mount UI with CDN assets for Vercel compatibility
+// Generate Swagger Spec and Mount UI
 try {
   const swaggerSpec = swaggerJsdoc(swaggerOptions);
   const SWAGGER_CDN = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5";
@@ -130,5 +140,4 @@ if (!process.env.VERCEL && process.env.NODE_ENV !== "test") {
   server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
-// Export the Express app for Vercel serverless execution
 module.exports = app;
