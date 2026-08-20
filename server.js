@@ -45,9 +45,11 @@ app.get("/health", (req, res) => {
 app.use((req, res) => res.status(404).json({ status: "fail", message: "Route not found" }));
 app.use(errorHandler);
 
-if (process.env.NODE_ENV !== "test") {
+// Only listen when running locally/traditionally (not on Vercel Serverless)
+if (!process.env.VERCEL && process.env.NODE_ENV !== "test") {
   const PORT = process.env.PORT || 3000;
   server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
-module.exports = { app, server };
+// Export the Express app for Vercel
+module.exports = app;
