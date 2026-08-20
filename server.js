@@ -1,4 +1,5 @@
 require("dotenv").config();
+const path = require("path");
 const http = require("http");
 const express = require("express");
 const { Server } = require("socket.io");
@@ -59,12 +60,12 @@ const swaggerOptions = {
       },
     ],
   },
-  // Paths to files containing OpenAPI/Swagger annotations
+  // Use path.join to create absolute paths for Vercel serverless execution
   apis: [
-    "./routes/*.js",
-    "./controllers/*.js",
-    "./models/*.js",
-    "./server.js",
+    path.join(__dirname, "./routes/*.js"),
+    path.join(__dirname, "./controllers/*.js"),
+    path.join(__dirname, "./models/*.js"),
+    path.join(__dirname, "./server.js"),
   ],
 };
 
