@@ -1,328 +1,682 @@
 # EventPulse API
 
-EventPulse is a feature-rich, production-ready RESTful API built with Node.js, Express, MongoDB, and Socket.io. It provides scalable event management, real-time announcements, role-based access control (RBAC), dynamic capacity management, input sanitization, and comprehensive automated test coverage.
+A production-ready RESTful API for event management, built with **Node.js, Express, MongoDB, Mongoose, and Socket.io**.
 
----
+EventPulse provides authentication, role-based access control, event management, registrations, real-time announcements, validation, security protections, and automated testing.
 
 ## Features
 
-- Authentication & Authorization: JWT-based authentication with role-based access (attendee, admin).
-- Event Management: Full CRUD support, advanced filtering (by city, category, date), search, pagination, and dynamic sorting.
-- Event Registrations: Real-time capacity enforcement, duplicate registration prevention, and user booking management.
-- Real-Time Announcements: Live WebSocket notifications via Socket.io event rooms.
-- Security & Validation: Strict input validation using express-validator, centralized error handling, and NoSQL injection safeguards.
-- Automated Testing Suite: Unit and integration testing powered by Jest and Supertest.
+* **Authentication & Authorization**
+
+  * JWT-based authentication
+  * Role-based access control
+  * Attendee and admin roles
+
+* **Event Management**
+
+  * Create, read, update, and delete events
+  * Search and filtering
+  * Filter by city, category, and date
+  * Pagination
+  * Dynamic sorting
+
+* **Event Registrations**
+
+  * User event registration
+  * Duplicate registration prevention
+  * Real-time capacity enforcement
+  * View personal registrations
+
+* **Real-Time Announcements**
+
+  * Socket.io integration
+  * Event-specific rooms
+  * Live announcement broadcasting
+
+* **Security & Validation**
+
+  * Express Validator
+  * Input sanitization
+  * NoSQL injection protection
+  * Centralized error handling
+  * JWT authentication
+
+* **Automated Testing**
+
+  * Jest
+  * Supertest
+  * Unit tests
+  * Integration tests
+  * Code coverage
 
 ---
 
 ## Tech Stack
 
-- Runtime Environment: Node.js (v18+)
-- Framework: Express.js
-- Database: MongoDB & Mongoose ODM
-- Real-Time Engine: Socket.io
-- Testing Tools: Jest & Supertest
-- Security & Auth: JSON Web Tokens (JWT), BcryptJS, Express Validator
+| Technology        | Purpose                 |
+| ----------------- | ----------------------- |
+| Node.js 18+       | Runtime                 |
+| Express.js        | REST API framework      |
+| MongoDB           | Database                |
+| Mongoose          | MongoDB ODM             |
+| Socket.io         | Real-time communication |
+| JWT               | Authentication          |
+| BcryptJS          | Password hashing        |
+| Express Validator | Input validation        |
+| Jest              | Testing                 |
+| Supertest         | API integration testing |
 
 ---
 
 ## Prerequisites
 
-Before getting started, ensure you have installed:
+Before running the project, make sure you have:
 
-- Node.js (v18.x or higher)
-- npm (v9.x or higher)
-- Local MongoDB Service running on localhost:27017 OR a MongoDB Atlas URI
-- Postman (for manual endpoint testing)
+* Node.js **v18.x or higher**
+* npm **v9.x or higher**
+* MongoDB running locally on `localhost:27017` or a MongoDB Atlas connection
+* Postman for manual API testing
 
 ---
 
-## Environment Configuration
+## Installation
 
-Create a `.env` file in the root folder and add the following configuration variables:
+### 1. Clone the repository
+
+```bash
+git clone <YOUR_REPOSITORY_URL>
+cd 31109040109978-EVENTPULSE
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+
+Create a `.env` file in the project root:
 
 ```env
 PORT=3000
 NODE_ENV=development
 MONGO_URI=mongodb://127.0.0.1:27017/eventpulse
-JWT_SECRET=super_secret_jwt_key_eventpulse_2026
+JWT_SECRET=your_secure_jwt_secret
 JWT_EXPIRES_IN=7d
+```
+
+> **Security:** Never commit your `.env` file or expose your JWT secret publicly.
+
+Add `.env` to `.gitignore`:
+
+```gitignore
+node_modules/
+.env
+coverage/
 ```
 
 ---
 
-## Quick Start Guide
+## Database Seeding
 
-### 1. Install Dependencies
-```bash
-npm install
-```
-
-### 2. Seed the Database
-Populate initial categories, sample events, and the default Admin account:
+Populate the database with initial categories, sample events, and the default administrator account:
 
 ```bash
 npm run seed
 ```
 
-**Seed Admin Credentials:**
-- **Email:** admin@eventpulse.com
-- **Password:** Admin123!
+### Default Admin Account
 
-### 3. Launch Server
+| Field    | Value                  |
+| -------- | ---------------------- |
+| Email    | `admin@eventpulse.com` |
+| Password | `Admin123!`            |
 
-- **Development Mode** (with live hot-reloading via Nodemon):
-  ```bash
-  npm run dev
-  ```
-
-- **Production Mode:**
-  ```bash
-  npm start
-  ```
-
-Verify the API status in your browser or Postman at: `http://localhost:3000/health`
+> **Important:** Change the default admin password before deploying the application to a production environment.
 
 ---
 
-## Comprehensive Automated Testing Guide
+## Running the Server
 
-The project uses Jest and Supertest to cover both unit utilities and integration end-to-end API routes.
+### Development
 
-### Running Test Suites
+Start the server with Nodemon:
 
-- **Run all automated tests once:**
-  ```bash
-  npm test
-  ```
+```bash
+npm run dev
+```
 
-- **Run tests in Watch Mode** (triggers automatically on file save):
-  ```bash
-  npx jest --watch
-  ```
+### Production
 
-- **Run tests with Code Coverage Report:**
-  ```bash
-  npx jest --coverage
-  ```
+Start the server normally:
 
-### Automated Test Coverage Breakdown
+```bash
+npm start
+```
 
-#### 1. Integration Tests (`tests/integration/events.test.js`)
-- `GET /health` — Validates system health and database status.
-- `GET /api/events` — Verifies listing events, pagination metadata, filtering parameters, and category population.
-- `POST /api/events` — Asserts role protection (rejects unauthenticated or non-admin requests with 401 Unauthorized/403 Forbidden).
+The API will be available at:
 
-#### 2. Unit Tests (`tests/unit/asyncHandler.test.js`)
-- Validates execution of asynchronous route handlers.
-- Asserts that rejected promises inside controller functions correctly forward errors to `next()`.
+```text
+http://localhost:3000
+```
 
-#### 3. Unit Tests (`tests/unit/AppError.test.js`)
-- Ensures operational errors correctly format custom status codes (4xx/5xx) and fail/error status strings.
+### Health Check
 
----
+Open:
 
-## Step-by-Step Postman Testing Guide
+```text
+http://localhost:3000/health
+```
 
-Follow this sequence in Postman to manually test the full application flow:
+Expected response:
 
-### Step 1: System Health Check
-- **Method:** `GET`
-- **URL:** `http://localhost:3000/health`
-- **Expected Status:** `200 OK`
+```json
+{
+  "status": "success"
+}
+```
 
 ---
 
-### Step 2: Query & Filter Events (Public Search)
-- **Method:** `GET`
-- **URL:** `http://localhost:3000/api/events?city=Cairo&page=1&limit=10&sortBy=date`
-- **Expected Status:** `200 OK`
-- **Expected Response:**
-  ```json
-  {
-    "status": "success",
-    "total": 1,
-    "page": 1,
-    "limit": 10,
-    "totalPages": 1,
-    "data": [
-      {
+# API Testing
+
+The following workflow can be used to test the complete application using Postman.
+
+## 1. System Health Check
+
+**Method:** `GET`
+
+**URL:**
+
+```text
+http://localhost:3000/health
+```
+
+**Expected Status:**
+
+```text
+200 OK
+```
+
+---
+
+## 2. Search and Filter Events
+
+Events can be searched and filtered without authentication.
+
+**Method:** `GET`
+
+**URL:**
+
+```text
+http://localhost:3000/api/events?city=Cairo&page=1&limit=10&sortBy=date
+```
+
+**Expected Status:**
+
+```text
+200 OK
+```
+
+### Example Response
+
+```json
+{
+  "status": "success",
+  "total": 1,
+  "page": 1,
+  "limit": 10,
+  "totalPages": 1,
+  "data": [
+    {
+      "_id": "66f...",
+      "title": "Global Tech Summit 2026",
+      "description": "Annual flagship technology and AI conference.",
+      "category": {
         "_id": "66f...",
-        "title": "Global Tech Summit 2026",
-        "description": "Annual flagship technology and AI conference.",
-        "category": {
-          "_id": "66f...",
-          "name": "Tech"
-        },
-        "date": "2026-10-15T00:00:00.000Z",
-        "city": "Cairo",
-        "venue": "Cairo International Convention Centre",
-        "capacity": 500
-      }
-    ]
-  }
-  ```
+        "name": "Tech"
+      },
+      "date": "2026-10-15T00:00:00.000Z",
+      "city": "Cairo",
+      "venue": "Cairo International Convention Centre",
+      "capacity": 500
+    }
+  ]
+}
+```
 
 ---
 
-### Step 3: Register a New Attendee
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/auth/register`
-- **Headers:** `Content-Type: application/json`
-- **Body (raw JSON):**
-  ```json
-  {
-    "name": "Jane Doe",
-    "email": "jane@example.com",
-    "password": "password123",
-    "role": "attendee"
-  }
-  ```
-> **Action:** Copy the returned token (Attendee Token).
+## 3. Register an Attendee
+
+**Method:** `POST`
+
+**URL:**
+
+```text
+http://localhost:3000/api/auth/register
+```
+
+**Headers:**
+
+```text
+Content-Type: application/json
+```
+
+**Body:**
+
+```json
+{
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "password": "password123",
+  "role": "attendee"
+}
+```
+
+Save the returned JWT token as the **Attendee Token**.
 
 ---
 
-### Step 4: Login as Admin
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/auth/login`
-- **Headers:** `Content-Type: application/json`
-- **Body (raw JSON):**
-  ```json
-  {
-    "email": "admin@eventpulse.com",
-    "password": "Admin123!"
-  }
-  ```
-> **Action:** Copy the returned token (Admin Token).
+## 4. Login as Admin
+
+**Method:** `POST`
+
+**URL:**
+
+```text
+http://localhost:3000/api/auth/login
+```
+
+**Headers:**
+
+```text
+Content-Type: application/json
+```
+
+**Body:**
+
+```json
+{
+  "email": "admin@eventpulse.com",
+  "password": "Admin123!"
+}
+```
+
+Save the returned JWT token as the **Admin Token**.
 
 ---
 
-### Step 5: Create a New Event (Admin Authorization)
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/events`
-- **Headers:**
-  - `Content-Type: application/json`
-  - `Authorization: Bearer <ADMIN_TOKEN>`
-- **Body (raw JSON):**
-  ```json
-  {
-    "title": "AI & Future Tech Summit",
-    "description": "An interactive summit on modern AI developments.",
-    "category": "<INSERT_CATEGORY_ID>",
-    "date": "2026-11-20",
-    "city": "Cairo",
-    "venue": "Grand Hall",
-    "capacity": 100
-  }
-  ```
-> **Action:** Copy the newly created event `_id`.
+## 5. Create an Event
+
+Only administrators can create events.
+
+**Method:** `POST`
+
+**URL:**
+
+```text
+http://localhost:3000/api/events
+```
+
+**Headers:**
+
+```text
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+```
+
+**Body:**
+
+```json
+{
+  "title": "AI & Future Tech Summit",
+  "description": "An interactive summit on modern AI developments.",
+  "category": "<CATEGORY_ID>",
+  "date": "2026-11-20",
+  "city": "Cairo",
+  "venue": "Grand Hall",
+  "capacity": 100
+}
+```
+
+Save the returned event `_id` as the **Event ID**.
 
 ---
 
-### Step 6: Register for an Event (Attendee Action)
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/registrations`
-- **Headers:**
-  - `Content-Type: application/json`
-  - `Authorization: Bearer <ATTENDEE_TOKEN>`
-- **Body (raw JSON):**
-  ```json
-  {
-    "event": "<INSERT_EVENT_ID>"
-  }
-  ```
+## 6. Register for an Event
+
+**Method:** `POST`
+
+**URL:**
+
+```text
+http://localhost:3000/api/registrations
+```
+
+**Headers:**
+
+```text
+Content-Type: application/json
+Authorization: Bearer <ATTENDEE_TOKEN>
+```
+
+**Body:**
+
+```json
+{
+  "event": "<EVENT_ID>"
+}
+```
+
+The attendee should now be registered for the event.
 
 ---
 
-### Step 7: Test Duplicate Registration Protection (Edge Case)
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/registrations`
-- **Headers:**
-  - `Content-Type: application/json`
-  - `Authorization: Bearer <ATTENDEE_TOKEN>`
-- **Body (raw JSON):**
-  ```json
-  {
-    "event": "<SAME_EVENT_ID_AS_STEP_6>"
-  }
-  ```
-- **Expected Status:** `400 Bad Request` ("You are already registered for this event")
+## 7. Test Duplicate Registration
+
+Send the same registration request again.
+
+**Method:** `POST`
+
+**URL:**
+
+```text
+http://localhost:3000/api/registrations
+```
+
+**Headers:**
+
+```text
+Content-Type: application/json
+Authorization: Bearer <ATTENDEE_TOKEN>
+```
+
+**Body:**
+
+```json
+{
+  "event": "<EVENT_ID>"
+}
+```
+
+**Expected Status:**
+
+```text
+400 Bad Request
+```
+
+**Expected Message:**
+
+```text
+You are already registered for this event
+```
+
+This verifies duplicate registration protection.
 
 ---
 
-### Step 8: Fetch User's Registered Events
-- **Method:** `GET`
-- **URL:** `http://localhost:3000/api/registrations/my-registrations`
-- **Headers:** `Authorization: Bearer <ATTENDEE_TOKEN>`
-- **Expected Status:** `200 OK`
+## 8. Get My Registrations
+
+**Method:** `GET`
+
+**URL:**
+
+```text
+http://localhost:3000/api/registrations/my-registrations
+```
+
+**Headers:**
+
+```text
+Authorization: Bearer <ATTENDEE_TOKEN>
+```
+
+**Expected Status:**
+
+```text
+200 OK
+```
 
 ---
 
-### Step 9: Broadcast Real-Time Announcement (Admin Action)
-- **Method:** `POST`
-- **URL:** `http://localhost:3000/api/announcements`
-- **Headers:**
-  - `Content-Type: application/json`
-  - `Authorization: Bearer <ADMIN_TOKEN>`
-- **Body (raw JSON):**
-  ```json
-  {
-    "eventId": "<INSERT_EVENT_ID>",
-    "text": "The opening keynote starts 15 minutes earlier. Please arrive on time!"
-  }
-  ```
-- **Expected Status:** `201 Created` (Triggers live WebSocket event to connected room clients)
+## 9. Broadcast a Real-Time Announcement
+
+Administrators can broadcast announcements to event participants using Socket.io.
+
+**Method:** `POST`
+
+**URL:**
+
+```text
+http://localhost:3000/api/announcements
+```
+
+**Headers:**
+
+```text
+Content-Type: application/json
+Authorization: Bearer <ADMIN_TOKEN>
+```
+
+**Body:**
+
+```json
+{
+  "eventId": "<EVENT_ID>",
+  "text": "The opening keynote starts 15 minutes earlier. Please arrive on time!"
+}
+```
+
+**Expected Status:**
+
+```text
+201 Created
+```
+
+The announcement is broadcast through the corresponding Socket.io event room.
 
 ---
 
-### Step 10: Test Unauthorized Access (Error Case)
-- **Method:** `DELETE`
-- **URL:** `http://localhost:3000/api/events/<EVENT_ID>`
-- **Headers:** `Authorization: Bearer <ATTENDEE_TOKEN>`
-- **Expected Status:** `403 Forbidden` ("You do not have permission to perform this action")
+## 10. Test Unauthorized Access
+
+An attendee should not be able to delete an event.
+
+**Method:** `DELETE`
+
+**URL:**
+
+```text
+http://localhost:3000/api/events/<EVENT_ID>
+```
+
+**Headers:**
+
+```text
+Authorization: Bearer <ATTENDEE_TOKEN>
+```
+
+**Expected Status:**
+
+```text
+403 Forbidden
+```
+
+**Expected Message:**
+
+```text
+You do not have permission to perform this action
+```
 
 ---
 
-## Project Structure
+# Automated Testing
+
+EventPulse uses **Jest** and **Supertest** for automated testing.
+
+## Run All Tests
+
+```bash
+npm test
+```
+
+## Watch Mode
+
+```bash
+npx jest --watch
+```
+
+## Generate Coverage Report
+
+```bash
+npx jest --coverage
+```
+
+---
+
+## Test Coverage
+
+### Integration Tests
+
+Located at:
+
+```text
+tests/integration/events.test.js
+```
+
+Tests include:
+
+* `GET /health`
+* `GET /api/events`
+* Event pagination
+* Event filtering
+* Category population
+* Admin authorization
+* Unauthorized event creation
+
+### Unit Tests
+
+Located at:
+
+```text
+tests/unit/
+```
+
+#### `asyncHandler.test.js`
+
+Tests:
+
+* Successful asynchronous route execution
+* Error forwarding to `next()`
+* Rejected promises inside controllers
+
+#### `AppError.test.js`
+
+Tests:
+
+* Custom HTTP status codes
+* Operational error handling
+* Correct error status formatting
+
+---
+
+# Project Structure
 
 ```text
 31109040109978-EVENTPULSE/
-├── config/             # Database connectivity setup
+│
+├── config/
 │   └── db.js
-├── controllers/        # Express request controllers & logic
+│
+├── controllers/
 │   ├── announcementController.js
 │   ├── authController.js
 │   ├── eventController.js
 │   └── registrationController.js
-├── middleware/         # Auth, validation, RBAC, and error handlers
+│
+├── middleware/
 │   ├── authMiddleware.js
 │   ├── errorHandler.js
 │   └── validateMiddleware.js
-├── models/             # Mongoose schemas
+│
+├── models/
 │   ├── announcement.model.js
 │   ├── category.model.js
 │   ├── event.model.js
 │   ├── registration.model.js
 │   └── user.model.js
-├── routes/             # API route definitions
+│
+├── routes/
 │   ├── announcementRoutes.js
 │   ├── authRoutes.js
 │   ├── eventRoutes.js
 │   └── registrationRoutes.js
-├── tests/              # Jest test suites (unit & integration)
+│
+├── tests/
 │   ├── integration/
 │   │   └── events.test.js
 │   └── unit/
 │       ├── AppError.test.js
 │       └── asyncHandler.test.js
-├── utils/              # Helper utilities
+│
+├── utils/
 │   ├── AppError.js
 │   └── asyncHandler.js
-├── .env                # Environment variables setup
-├── package.json        # Dependencies and npm scripts
-├── seed.js             # DB initialization and seeder file
-├── server.js           # Main application entry point & Socket.io setup
-└── README.md           # API documentation & testing guide
-```#   3 1 1 0 9 0 4 0 1 0 9 9 7 8 - E v e n t P u l s e  
- #   3 1 1 0 9 0 4 0 1 0 9 9 7 8 - E v e n t P u l s e  
- 
+│
+├── .env
+├── .gitignore
+├── package.json
+├── seed.js
+├── server.js
+└── README.md
+```
+
+---
+
+# API Endpoints
+
+| Method   | Endpoint                              | Access   | Description            |
+| -------- | ------------------------------------- | -------- | ---------------------- |
+| `GET`    | `/health`                             | Public   | API health check       |
+| `POST`   | `/api/auth/register`                  | Public   | Register a user        |
+| `POST`   | `/api/auth/login`                     | Public   | Login                  |
+| `GET`    | `/api/events`                         | Public   | List and search events |
+| `POST`   | `/api/events`                         | Admin    | Create an event        |
+| `PUT`    | `/api/events/:id`                     | Admin    | Update an event        |
+| `DELETE` | `/api/events/:id`                     | Admin    | Delete an event        |
+| `POST`   | `/api/registrations`                  | Attendee | Register for an event  |
+| `GET`    | `/api/registrations/my-registrations` | Attendee | View registrations     |
+| `POST`   | `/api/announcements`                  | Admin    | Broadcast announcement |
+
+---
+
+# Security
+
+The application includes several security measures:
+
+* JWT authentication
+* Password hashing with BcryptJS
+* Role-based authorization
+* Request validation
+* Input sanitization
+* NoSQL injection protection
+* Centralized error handling
+* Duplicate registration protection
+* Event capacity enforcement
+
+**Never commit secrets to GitHub.**
+
+Make sure your `.gitignore` contains:
+
+```gitignore
+node_modules/
+.env
+coverage/
+```
+
+---
+
+# License
+
+This project is intended for educational and development purposes.
