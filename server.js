@@ -5,6 +5,7 @@ const { Server } = require("socket.io");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
 
 const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorHandler");
@@ -38,16 +39,44 @@ app.get("/", (req, res) => {
   });
 });
 
-// Safe Swagger API Docs Setup (handles path or file loading issues without crashing)
+// Swagger JSDoc Options Configuration
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "EventPulse API",
+      version: "1.0.0",
+      description: "EventPulse Backend API Documentation",
+    },
+    servers: [
+      {
+        url: "https://31109040109978-event-pulse.vercel.app",
+        description: "Production Server (Vercel)",
+      },
+      {
+        url: "http://localhost:3000",
+        description: "Development Server",
+      },
+    ],
+  },
+  // Paths to files containing OpenAPI/Swagger annotations
+  apis: [
+    "./routes/*.js",
+    "./controllers/*.js",
+    "./models/*.js",
+    "./server.js",
+  ],
+};
+
+// Generate Swagger Spec and Mount UI with CDN assets for Vercel compatibility
 try {
-  // Adjust this require path to match your swagger file location (e.g., "./swagger.json")
-  const swaggerDocument = require("./swagger.json");
+  const swaggerSpec = swaggerJsdoc(swaggerOptions);
   const SWAGGER_CDN = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5";
 
   app.use(
     "/api-docs",
     swaggerUi.serve,
-    swaggerUi.setup(swaggerDocument, {
+    swaggerUi.setup(swaggerSpec, {
       customCssUrl: `${SWAGGER_CDN}/swagger-ui.min.css`,
       customJs: [
         `${SWAGGER_CDN}/swagger-ui-bundle.js`,
@@ -56,11 +85,11 @@ try {
     })
   );
 } catch (err) {
-  console.error("Swagger setup skipped or failed:", err.message);
+  console.error("Swagger generation failed:", err.message);
   app.get("/api-docs", (req, res) => {
     res.status(500).json({
       status: "error",
-      message: "Swagger documentation failed to load on server.",
+      message: "Failed to generate Swagger documentation",
       details: err.message,
     });
   });
@@ -88,17 +117,17 @@ app.get("/health", (req, res) => {
   });
 });
 
-// 404 & Error Handlers
+// 404 Handler & Error Middleware
 app.use((req, res) =>
   res.status(404).json({ status: "fail", message: "Route not found" })
 );
 app.use(errorHandler);
 
-// Only listen on port in traditional local/server environments
+// Only listen on port in local or non-Vercel environments
 if (!process.env.VERCEL && process.env.NODE_ENV !== "test") {
   const PORT = process.env.PORT || 3000;
   server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
-// Export Express app for Vercel serverless execution
+// Export the Express app for Vercel serverless execution
 module.exports = app;
