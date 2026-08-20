@@ -74,7 +74,7 @@ Before running the project, make sure you have:
 
 * Node.js **v18.x or higher**
 * npm **v9.x or higher**
-* MongoDB running locally on `localhost:27017` or a MongoDB Atlas connection
+* MongoDB Atlas connection 
 * Postman for manual API testing
 
 ---
