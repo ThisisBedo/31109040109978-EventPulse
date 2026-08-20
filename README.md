@@ -4,6 +4,12 @@ A production-ready RESTful API for event management, built with **Node.js, Expre
 
 EventPulse provides authentication, role-based access control, event management, registrations, real-time announcements, validation, security protections, and automated testing.
 
+## Author
+
+**Abdelrahman Mohamed Elfar**
+
+---
+
 ## Features
 
 * **Authentication & Authorization**
@@ -48,6 +54,7 @@ EventPulse provides authentication, role-based access control, event management,
   * Unit tests
   * Integration tests
   * Code coverage
+
 
 ---
 
