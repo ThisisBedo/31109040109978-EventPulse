@@ -665,18 +665,3 @@ The application includes several security measures:
 * Duplicate registration protection
 * Event capacity enforcement
 
-**Never commit secrets to GitHub.**
-
-Make sure your `.gitignore` contains:
-
-```gitignore
-node_modules/
-.env
-coverage/
-```
-
----
-
-# License
-
-This project is intended for educational and development purposes.
