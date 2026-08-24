@@ -140,7 +140,6 @@ npm run seed
 | Email    | `admin@eventpulse.com` |
 | Password | `Admin123!`            |
 
-> **Important:** Change the default admin password before deploying the application to a production environment.
 
 ---
 
