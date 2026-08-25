@@ -2,14 +2,14 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-// Updated paths for root directory execution
 const User = require("./models/user.model");
 const Category = require("./models/category.model");
 const Event = require("./models/event.model");
+const Registration = require("./models/registration.model");
+const Message = require("./models/message.model");
 
 const seedDB = async () => {
   try {
-    // Read directly from .env
     const mongoUri = process.env.MONGO_URI;
 
     if (!mongoUri) {
@@ -23,6 +23,8 @@ const seedDB = async () => {
     await User.deleteMany({});
     await Category.deleteMany({});
     await Event.deleteMany({});
+    await Registration.deleteMany({});
+    await Message.deleteMany({});
 
     const adminPassword = await bcrypt.hash("Admin123!", 12);
     const adminUser = await User.create({
@@ -38,9 +40,8 @@ const seedDB = async () => {
       { name: "Sports", description: "Tournaments and Fitness Events" }
     ]);
 
-    // Existing event with 500 capacity
     await Event.create({
-      title: "Global Tech Summit 2026",
+      title: "AI & Future Tech Summit '26",
       description: "Annual flagship technology and AI conference.",
       category: categories[0]._id,
       date: new Date("2026-10-15"),
@@ -50,9 +51,8 @@ const seedDB = async () => {
       organizer: adminUser._id
     });
 
-    // New event with capacity of 1
     await Event.create({
-      title: "VIP Exclusive Masterclass 2026",
+      title: "1-on-1 CTO Masterclass [VIP Only]",
       description: "One-on-one executive mentoring session.",
       category: categories[0]._id,
       date: new Date("2026-11-20"),
