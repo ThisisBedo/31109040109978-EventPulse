@@ -9,7 +9,15 @@ const Event = require("./models/event.model");
 
 const seedDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/eventpulse");
+    // Read directly from .env
+    const mongoUri = process.env.MONGO_URI;
+
+    if (!mongoUri) {
+      console.error("Fatal Error: MONGO_URI is missing from environment variables (.env).");
+      process.exit(1);
+    }
+
+    await mongoose.connect(mongoUri);
     console.log("Connected to DB for seeding...");
 
     await User.deleteMany({});
@@ -30,6 +38,7 @@ const seedDB = async () => {
       { name: "Sports", description: "Tournaments and Fitness Events" }
     ]);
 
+    // Existing event with 500 capacity
     await Event.create({
       title: "Global Tech Summit 2026",
       description: "Annual flagship technology and AI conference.",
@@ -38,6 +47,18 @@ const seedDB = async () => {
       city: "Cairo",
       venue: "Cairo International Convention Centre",
       capacity: 500,
+      organizer: adminUser._id
+    });
+
+    // New event with capacity of 1
+    await Event.create({
+      title: "VIP Exclusive Masterclass 2026",
+      description: "One-on-one executive mentoring session.",
+      category: categories[0]._id,
+      date: new Date("2026-11-20"),
+      city: "Cairo",
+      venue: "Private Executive Lounge",
+      capacity: 1,
       organizer: adminUser._id
     });
 
