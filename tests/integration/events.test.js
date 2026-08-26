@@ -1,6 +1,6 @@
 const request = require("supertest");
 const mongoose = require("mongoose");
-const { app, server } = require("../../server");
+const app = require("../../server"); // <-- Simple default import here!
 const Event = require("../../models/event.model");
 
 describe("Events API Integration Tests", () => {
@@ -13,9 +13,6 @@ describe("Events API Integration Tests", () => {
     // Ensure active handles are closed cleanly
     if (mongoose.connection.readyState !== 0) {
       await mongoose.connection.close();
-    }
-    if (server && server.close) {
-      await new Promise((resolve) => server.close(resolve));
     }
   });
 
